@@ -1,0 +1,50 @@
+# Virtual environments
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables
+.env
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+
+# Alembic cache
+alembic/versions/__pycache__/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# mypy / type checking
+.mypy_cache/
+
+# Ruff / lint cache
+.ruff_cache/
+
+# Pyright
+.pyright/
+
+# SQLite (if ever used locally)
+*.db
+
+# UV cache (optional)
+.uv/

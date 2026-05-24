@@ -26,4 +26,4 @@ class User(Base):
         default=datetime.utcnow,
     )
 
-    urls = relationship("URL", back_populates="user")
+    urls: Mapped[list["ShortURL"]] = relationship(back_populates="user")

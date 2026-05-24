@@ -14,7 +14,7 @@ from sqlalchemy.orm import (
 )
 
 
-class URL(Base):
+class ShortURL(Base):
     __tablename__ = "urls"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -50,4 +50,4 @@ class URL(Base):
         nullable=False,
     )
 
-    user = relationship("User", back_populates="urls")
+    user: Mapped["User"] = relationship(back_populates="urls")

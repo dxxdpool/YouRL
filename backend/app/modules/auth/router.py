@@ -1,9 +1,11 @@
 from app.core.database import get_db
 from app.modules.auth.schemas import (
+    TokenResponse,
+    UserLoginRequest,
     UserRegisterRequest,
     UserResponse,
 )
-from app.modules.auth.service import register_user
+from app.modules.auth.service import login_user, register_user
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -27,3 +29,17 @@ async def register(
     )
 
     return user
+
+
+@router.post(
+    "/login",
+    response_model=TokenResponse,
+)
+async def login(
+    data: UserLoginRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    return await login_user(
+        db,
+        data,
+    )

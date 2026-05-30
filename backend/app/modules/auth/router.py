@@ -1,4 +1,6 @@
 from app.core.database import get_db
+from app.modules.auth.dependencies import get_current_user
+from app.modules.auth.models import User
 from app.modules.auth.schemas import (
     TokenResponse,
     UserLoginRequest,
@@ -43,3 +45,13 @@ async def login(
         db,
         data,
     )
+
+
+@router.get(
+    "/me",
+    response_model=UserResponse,
+)
+async def me(
+    current_user: User = Depends(get_current_user),
+):
+    return current_user

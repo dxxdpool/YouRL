@@ -10,6 +10,7 @@ from app.modules.urls.schemas import (
 from app.modules.urls.utils import (
     generate_short_code,
 )
+from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -46,3 +47,22 @@ async def create_short_url(
         short_code=short_code,
         user_id=current_user.id,
     )
+
+
+async def get_original_url(
+    db: AsyncSession,
+    short_code: str,
+) -> str:
+
+    url = await get_url_by_short_code(
+        db,
+        short_code,
+    )
+
+    if not url:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="URL not found",
+        )
+
+    return url.original_url

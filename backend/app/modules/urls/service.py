@@ -1,8 +1,12 @@
 from app.modules.auth.models import User
+from app.modules.urls.models import ShortURL
 from app.modules.urls.repository import (
     create_url,
+    delete_url,
+    get_url_by_id_and_user_id,
     get_url_by_short_code,
     get_url_by_user_and_original_url,
+    get_urls_by_user_id,
 )
 from app.modules.urls.schemas import (
     CreateURLRequest,
@@ -66,3 +70,38 @@ async def get_original_url(
         )
 
     return url.original_url
+
+
+async def list_user_urls(
+    db: AsyncSession,
+    current_user: User,
+) -> list[ShortURL]:
+
+    return await get_urls_by_user_id(
+        db,
+        current_user.id,
+    )
+
+
+async def delete_user_url(
+    db: AsyncSession,
+    current_user: User,
+    url_id: int,
+) -> None:
+
+    url = await get_url_by_id_and_user_id(
+        db,
+        url_id,
+        current_user.id,
+    )
+
+    if not url:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="URL not found",
+        )
+
+    await delete_url(
+        db,
+        url,
+    )

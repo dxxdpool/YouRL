@@ -29,6 +29,36 @@ async def get_url_by_short_code(
     return result.scalar_one_or_none()
 
 
+async def get_urls_by_user_id(
+    db: AsyncSession,
+    user_id: int,
+) -> list[ShortURL]:
+
+    result = await db.execute(
+        select(ShortURL)
+        .where(ShortURL.user_id == user_id)
+        .order_by(ShortURL.created_at.desc())
+    )
+
+    return list(result.scalars().all())
+
+
+async def get_url_by_id_and_user_id(
+    db: AsyncSession,
+    url_id: int,
+    user_id: int,
+) -> ShortURL | None:
+
+    result = await db.execute(
+        select(ShortURL).where(
+            ShortURL.id == url_id,
+            ShortURL.user_id == user_id,
+        )
+    )
+
+    return result.scalar_one_or_none()
+
+
 async def create_url(
     db: AsyncSession,
     *,
@@ -49,3 +79,13 @@ async def create_url(
     await db.refresh(url)
 
     return url
+
+
+async def delete_url(
+    db: AsyncSession,
+    url: ShortURL,
+) -> None:
+
+    await db.delete(url)
+
+    await db.commit()

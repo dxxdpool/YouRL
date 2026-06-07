@@ -3,13 +3,15 @@ from app.modules.urls.models import ShortURL
 from app.modules.urls.repository import (
     create_url,
     delete_url,
+    get_paginated_urls_by_user_id,
+    get_total_urls_by_user_id,
     get_url_by_id_and_user_id,
     get_url_by_short_code,
     get_url_by_user_and_original_url,
-    get_urls_by_user_id,
 )
 from app.modules.urls.schemas import (
     CreateURLRequest,
+    PaginatedURLsResponse,
 )
 from app.modules.urls.utils import (
     generate_short_code,
@@ -75,11 +77,29 @@ async def get_original_url(
 async def list_user_urls(
     db: AsyncSession,
     current_user: User,
-) -> list[ShortURL]:
+    page: int,
+    page_size: int,
+) -> PaginatedURLsResponse:
 
-    return await get_urls_by_user_id(
+    offset = (page - 1) * page_size
+
+    urls = await get_paginated_urls_by_user_id(
         db,
         current_user.id,
+        offset,
+        page_size,
+    )
+
+    total = await get_total_urls_by_user_id(
+        db,
+        current_user.id,
+    )
+
+    return PaginatedURLsResponse(
+        items=urls,
+        total=total,
+        page=page,
+        page_size=page_size,
     )
 
 

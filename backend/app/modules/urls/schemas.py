@@ -11,3 +11,10 @@ class URLResponse(BaseModel):
     short_code: str
 
     model_config = {"from_attributes": True}
+
+
+class PaginatedURLsResponse(BaseModel):
+    items: list[URLResponse]
+    total: int
+    page: int
+    page_size: int

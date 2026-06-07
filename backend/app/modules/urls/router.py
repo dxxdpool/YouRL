@@ -1,12 +1,15 @@
+from typing import Annotated
+
 from app.core.database import get_db
 from app.modules.auth.dependencies import get_current_user
 from app.modules.auth.models import User
 from app.modules.urls.schemas import (
     CreateURLRequest,
+    PaginatedURLsResponse,
     URLResponse,
 )
 from app.modules.urls.service import create_short_url, delete_user_url, list_user_urls
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(
@@ -33,15 +36,19 @@ async def create_url(
 
 @router.get(
     "",
-    response_model=list[URLResponse],
+    response_model=PaginatedURLsResponse,
 )
 async def get_my_urls(
+    page: Annotated[int, Query(ge=1)] = 1,
+    page_size: Annotated[int, Query(ge=1, le=100)] = 10,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     return await list_user_urls(
         db,
         current_user,
+        page,
+        page_size,
     )
 
 

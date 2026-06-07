@@ -1,5 +1,5 @@
 from app.modules.urls.models import ShortURL
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -29,18 +29,34 @@ async def get_url_by_short_code(
     return result.scalar_one_or_none()
 
 
-async def get_urls_by_user_id(
+async def get_paginated_urls_by_user_id(
     db: AsyncSession,
     user_id: int,
+    offset: int,
+    limit: int,
 ) -> list[ShortURL]:
 
     result = await db.execute(
         select(ShortURL)
         .where(ShortURL.user_id == user_id)
         .order_by(ShortURL.created_at.desc())
+        .offset(offset)
+        .limit(limit)
     )
 
     return list(result.scalars().all())
+
+
+async def get_total_urls_by_user_id(
+    db: AsyncSession,
+    user_id: int,
+) -> int:
+
+    result = await db.execute(
+        select(func.count(ShortURL.id)).where(ShortURL.user_id == user_id)
+    )
+
+    return result.scalar_one()
 
 
 async def get_url_by_id_and_user_id(

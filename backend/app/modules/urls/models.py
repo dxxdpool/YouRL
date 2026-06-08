@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from app.core.database import Base
 from sqlalchemy import (
@@ -12,6 +13,10 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
+
+if TYPE_CHECKING:
+    from app.modules.analytics.models import AnalyticsEvent
+    from app.modules.auth.models import User
 
 
 class ShortURL(Base):
@@ -51,3 +56,7 @@ class ShortURL(Base):
     )
 
     user: Mapped["User"] = relationship(back_populates="urls")
+
+    analytics_events: Mapped[list["AnalyticsEvent"]] = relationship(
+        back_populates="url"
+    )

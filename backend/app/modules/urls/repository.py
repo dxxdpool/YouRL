@@ -91,9 +91,6 @@ async def create_url(
 
     db.add(url)
 
-    await db.commit()
-    await db.refresh(url)
-
     return url
 
 
@@ -103,5 +100,3 @@ async def delete_url(
 ) -> None:
 
     await db.delete(url)
-
-    await db.commit()

@@ -34,7 +34,4 @@ async def create_user(
 
     db.add(user)
 
-    await db.commit()
-    await db.refresh(user)
-
     return user

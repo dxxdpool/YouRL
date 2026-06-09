@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import TYPE_CHECKING
 
 from app.core.database import Base
@@ -26,8 +26,8 @@ class User(Base):
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
     )
 
     urls: Mapped[list["ShortURL"]] = relationship(back_populates="user")

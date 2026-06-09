@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import TYPE_CHECKING
 
 from app.core.database import Base
@@ -19,8 +19,8 @@ class AnalyticsEvent(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
 
     clicked_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
     )
 
     url_id: Mapped[int] = mapped_column(

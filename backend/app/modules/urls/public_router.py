@@ -1,7 +1,6 @@
 from app.core.database import get_db
-from app.modules.urls.service import (
-    get_original_url,
-)
+from app.modules.analytics.service import record_click
+from app.modules.urls.service import get_url
 from fastapi import APIRouter, Depends
 from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,12 +13,17 @@ async def redirect_url(
     short_code: str,
     db: AsyncSession = Depends(get_db),
 ):
-    original_url = await get_original_url(
+    url = await get_url(
         db,
         short_code,
     )
 
+    await record_click(
+        db,
+        url,
+    )
+
     return RedirectResponse(
-        url=original_url,
+        url=url.original_url,
         status_code=307,
     )

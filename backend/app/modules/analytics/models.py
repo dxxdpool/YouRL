@@ -24,7 +24,10 @@ class AnalyticsEvent(Base):
     )
 
     url_id: Mapped[int] = mapped_column(
-        ForeignKey("urls.id"),
+        ForeignKey(
+            "urls.id",
+            ondelete="CASCADE",
+        ),
         nullable=False,
     )
 

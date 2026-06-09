@@ -58,5 +58,6 @@ class ShortURL(Base):
     user: Mapped["User"] = relationship(back_populates="urls")
 
     analytics_events: Mapped[list["AnalyticsEvent"]] = relationship(
-        back_populates="url"
+        back_populates="url",
+        passive_deletes=True,
     )

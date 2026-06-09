@@ -65,10 +65,10 @@ async def create_short_url(
     return url
 
 
-async def get_original_url(
+async def get_url(
     db: AsyncSession,
     short_code: str,
-) -> str:
+) -> ShortURL:
 
     url = await get_url_by_short_code(
         db,
@@ -81,7 +81,7 @@ async def get_original_url(
             detail="URL not found",
         )
 
-    return url.original_url
+    return url
 
 
 async def list_user_urls(

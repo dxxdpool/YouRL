@@ -3,7 +3,6 @@ from app.core.security import (
     hash_password,
     verify_password,
 )
-from app.core.transaction import commit_or_rollback
 from app.modules.auth.models import User
 from app.modules.auth.repository import (
     create_user,
@@ -36,13 +35,18 @@ async def register_user(
 
     password_hash = hash_password(data.password)
 
-    user = await create_user(
-        db,
-        email=data.email,
-        password_hash=password_hash,
-    )
+    try:
+        user = await create_user(
+            db,
+            email=data.email,
+            password_hash=password_hash,
+        )
 
-    await commit_or_rollback(db)
+        await db.commit()
+    except Exception:
+        await db.rollback()
+        raise
+
     await db.refresh(user)
 
     return user

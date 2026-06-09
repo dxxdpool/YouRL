@@ -1,4 +1,3 @@
-from app.core.transaction import commit_or_rollback
 from app.modules.auth.models import User
 from app.modules.urls.models import ShortURL
 from app.modules.urls.repository import (
@@ -48,14 +47,19 @@ async def create_short_url(
         if not collision:
             break
 
-    url = await create_url(
-        db,
-        original_url=str(data.original_url),
-        short_code=short_code,
-        user_id=current_user.id,
-    )
+    try:
+        url = await create_url(
+            db,
+            original_url=str(data.original_url),
+            short_code=short_code,
+            user_id=current_user.id,
+        )
 
-    await commit_or_rollback(db)
+        await db.commit()
+    except Exception:
+        await db.rollback()
+        raise
+
     await db.refresh(url)
 
     return url
@@ -127,9 +131,13 @@ async def delete_user_url(
             detail="URL not found",
         )
 
-    await delete_url(
-        db,
-        url,
-    )
+    try:
+        await delete_url(
+            db,
+            url,
+        )
 
-    await commit_or_rollback(db)
+        await db.commit()
+    except Exception:
+        await db.rollback()
+        raise

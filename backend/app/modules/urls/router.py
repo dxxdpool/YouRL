@@ -6,9 +6,15 @@ from app.modules.auth.models import User
 from app.modules.urls.schemas import (
     CreateURLRequest,
     PaginatedURLsResponse,
+    UpdateURLRequest,
     URLResponse,
 )
-from app.modules.urls.service import create_short_url, delete_user_url, list_user_urls
+from app.modules.urls.service import (
+    create_short_url,
+    delete_user_url,
+    list_user_urls,
+    update_user_url,
+)
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -65,4 +71,22 @@ async def delete_url_endpoint(
         db,
         current_user,
         url_id,
+    )
+
+
+@router.patch(
+    "/{url_id}",
+    response_model=URLResponse,
+)
+async def update_url_endpoint(
+    url_id: int,
+    data: UpdateURLRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    return await update_user_url(
+        db,
+        current_user,
+        url_id,
+        data,
     )

@@ -8,6 +8,10 @@ class CreateURLRequest(BaseModel):
     expires_at: datetime | None = None
 
 
+class UpdateURLRequest(BaseModel):
+    expires_at: datetime | None
+
+
 class URLResponse(BaseModel):
     id: int
     original_url: str

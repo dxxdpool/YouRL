@@ -14,6 +14,7 @@ from app.modules.urls.repository import (
 from app.modules.urls.schemas import (
     CreateURLRequest,
     PaginatedURLsResponse,
+    UpdateURLRequest,
 )
 from app.modules.urls.utils import (
     generate_short_code,
@@ -153,6 +154,57 @@ async def delete_user_url(
         )
 
         await db.commit()
+    except Exception:
+        await db.rollback()
+        raise
+
+
+async def update_user_url(
+    db: AsyncSession,
+    current_user: User,
+    url_id: int,
+    data: UpdateURLRequest,
+) -> ShortURL:
+
+    url = await get_url_by_id_and_user_id(
+        db,
+        url_id,
+        current_user.id,
+    )
+
+    if not url:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="URL not found",
+        )
+
+    if data.expires_at is not None and data.expires_at <= datetime.now(UTC):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Expiration time must be in the future",
+        )
+
+    existing_url = await get_existing_url(
+        db,
+        current_user.id,
+        url.original_url,
+        data.expires_at,
+    )
+
+    if existing_url and existing_url.id != url.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=("A URL with the same destination and expiration already exists"),
+        )
+
+    try:
+        url.expires_at = data.expires_at
+
+        await db.commit()
+        await db.refresh(url)
+
+        return url
+
     except Exception:
         await db.rollback()
         raise

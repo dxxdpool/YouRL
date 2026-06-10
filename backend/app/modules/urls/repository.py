@@ -1,18 +1,22 @@
+from datetime import datetime
+
 from app.modules.urls.models import ShortURL
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-async def get_url_by_user_and_original_url(
+async def get_existing_url(
     db: AsyncSession,
     user_id: int,
     original_url: str,
+    expires_at: datetime | None,
 ) -> ShortURL | None:
 
     result = await db.execute(
         select(ShortURL).where(
             ShortURL.user_id == user_id,
             ShortURL.original_url == original_url,
+            ShortURL.expires_at == expires_at,
         )
     )
 
@@ -81,12 +85,14 @@ async def create_url(
     original_url: str,
     short_code: str,
     user_id: int,
+    expires_at: datetime | None,
 ) -> ShortURL:
 
     url = ShortURL(
         original_url=original_url,
         short_code=short_code,
         user_id=user_id,
+        expires_at=expires_at,
     )
 
     db.add(url)

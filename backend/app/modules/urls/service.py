@@ -1,13 +1,15 @@
+from datetime import UTC, datetime
+
 from app.modules.auth.models import User
 from app.modules.urls.models import ShortURL
 from app.modules.urls.repository import (
     create_url,
     delete_url,
+    get_existing_url,
     get_paginated_urls_by_user_id,
     get_total_urls_by_user_id,
     get_url_by_id_and_user_id,
     get_url_by_short_code,
-    get_url_by_user_and_original_url,
 )
 from app.modules.urls.schemas import (
     CreateURLRequest,
@@ -25,11 +27,17 @@ async def create_short_url(
     current_user: User,
     data: CreateURLRequest,
 ):
+    if data.expires_at is not None and data.expires_at <= datetime.now(UTC):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Expiration time must be in the future",
+        )
 
-    existing_url = await get_url_by_user_and_original_url(
+    existing_url = await get_existing_url(
         db,
         current_user.id,
         str(data.original_url),
+        data.expires_at,
     )
 
     if existing_url:
@@ -53,6 +61,7 @@ async def create_short_url(
             original_url=str(data.original_url),
             short_code=short_code,
             user_id=current_user.id,
+            expires_at=data.expires_at,
         )
 
         await db.commit()
@@ -79,6 +88,12 @@ async def get_url(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="URL not found",
+        )
+
+    if url.expires_at is not None and datetime.now(UTC) >= url.expires_at:
+        raise HTTPException(
+            status_code=status.HTTP_410_GONE,
+            detail="URL has expired",
         )
 
     return url

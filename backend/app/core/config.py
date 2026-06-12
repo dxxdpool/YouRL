@@ -3,9 +3,14 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     DATABASE_URL: str
+    REDIS_URL: str
+
     JWT_SECRET: str
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
+    URL_CREATION_RATE_LIMIT: int = 5
+    URL_CREATION_RATE_WINDOW_SECONDS: int = 60
 
     ENVIRONMENT: str = "development"
 

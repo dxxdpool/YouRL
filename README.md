@@ -1,6 +1,6 @@
 # YouRL
 
-![Tests](...)
+[![Tests](https://github.com/dxxdpool/YouRL/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/dxxdpool/YouRL/actions/workflows/tests.yml)
 
 A URL shortener built with **FastAPI**, **PostgreSQL**, and **Redis**.
 

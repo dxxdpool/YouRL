@@ -9,6 +9,7 @@ __pycache__/
 
 # Environment variables
 .env
+.env.test
 
 # IDE files
 .vscode/

@@ -1,3 +1,7 @@
+import os
+
+os.environ["ENV_FILE"] = ".env.test"
+
 from app.main import app
 from httpx import ASGITransport, AsyncClient
 from pytest_asyncio import fixture

@@ -41,4 +41,5 @@ Swagger UI: [http://localhost:8000/docs](http://localhost:8000/docs)
 ## Running Tests
 your command:
 ```bash
-uv run pytest```
+uv run pytest
+```

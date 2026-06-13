@@ -1,5 +1,7 @@
 # YouRL
 
+![Tests](...)
+
 A URL shortener built with **FastAPI**, **PostgreSQL**, and **Redis**.
 
 ## Features

@@ -1,3 +1,4 @@
+from app.core.config import settings
 from app.core.security import (
     create_access_token,
     hash_password,
@@ -21,6 +22,9 @@ async def register_user(
     db: AsyncSession,
     data: UserRegisterRequest,
 ) -> User:
+
+    if not settings.ALLOW_REGISTRATION:
+        raise HTTPException(status_code=403, detail="Registration disabled")
 
     existing_user = await get_user_by_email(
         db,

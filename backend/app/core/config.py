@@ -13,6 +13,7 @@ class Settings(BaseSettings):
 
     URL_CREATION_RATE_LIMIT: int = 5
     URL_CREATION_RATE_WINDOW_SECONDS: int = 60
+    ALLOW_REGISTRATION: bool = True
 
     ENVIRONMENT: str = "development"
 

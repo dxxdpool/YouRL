@@ -4,7 +4,7 @@ A URL shortener built with **FastAPI**, **PostgreSQL**, and **Redis**.
 
 ## Live Demo
 API Docs:
-https://your-service.onrender.com/docs
+https://yourl-api.onrender.com/docs
 
 ### CI Status
 [![Tests](https://github.com/dxxdpool/YouRL/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/dxxdpool/YouRL/actions/workflows/tests.yml)
